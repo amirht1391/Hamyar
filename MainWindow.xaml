@@ -1,0 +1,721 @@
+<Window x:Class="Hamyar.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:l="clr-namespace:Hamyar"
+        Title="Hamyar" Width="1120" Height="760" MinWidth="900" MinHeight="620"
+        WindowStartupLocation="CenterScreen" Icon="app.ico"
+        Background="{DynamicResource BgBrush}" Foreground="{DynamicResource FgBrush}"
+        FontFamily="{DynamicResource AppFont}" FontSize="14">
+  <!-- The Window itself stays LTR (caption buttons on the right). Only the content follows the language direction. -->
+  <Grid x:Name="RootGrid" FlowDirection="{Binding Flow, Source={x:Static l:Loc.I}}">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="240"/>
+      <ColumnDefinition Width="*"/>
+    </Grid.ColumnDefinitions>
+
+    <!-- ================= Sidebar ================= -->
+    <Border Grid.Column="0" Margin="14,6,6,14" Padding="14" CornerRadius="22"
+            Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="1">
+      <DockPanel LastChildFill="True">
+
+        <!-- brand -->
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="2,2,2,22">
+          <Border Width="40" Height="40" CornerRadius="12" Background="{DynamicResource AccentBrush}">
+            <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE7ED;" FontSize="21"
+                       Foreground="{DynamicResource OnAccentBrush}"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          </Border>
+          <TextBlock Text="{Binding [app], Source={x:Static l:Loc.I}}" FontSize="19" FontWeight="ExtraBold"
+                     VerticalAlignment="Center" Margin="12,0,0,0"/>
+        </StackPanel>
+
+        <!-- exit -->
+        <Button DockPanel.Dock="Bottom" Style="{StaticResource GhostButton}" Click="Exit_Click" Margin="0">
+          <StackPanel Orientation="Horizontal">
+            <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE7E8;" Margin="0,0,8,0" VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding [exit], Source={x:Static l:Loc.I}}"/>
+          </StackPanel>
+        </Button>
+
+        <!-- navigation (the tabs can be dragged into any order) -->
+        <StackPanel x:Name="NavPanel">
+          <RadioButton x:Name="NavHome" Style="{StaticResource Chip}" GroupName="nav" Tag="home"
+                       IsChecked="True" Checked="Nav_Checked" HorizontalContentAlignment="Left" Margin="0,3">
+            <StackPanel Orientation="Horizontal">
+              <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE80F;" Margin="0,0,12,0" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding [nav_home], Source={x:Static l:Loc.I}}"/>
+            </StackPanel>
+          </RadioButton>
+          <RadioButton x:Name="NavTables" Style="{StaticResource Chip}" GroupName="nav" Tag="tables"
+                       Checked="Nav_Checked" HorizontalContentAlignment="Left" Margin="0,3">
+            <StackPanel Orientation="Horizontal">
+              <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE8FD;" Margin="0,0,12,0" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding [nav_tables], Source={x:Static l:Loc.I}}"/>
+            </StackPanel>
+          </RadioButton>
+          <RadioButton x:Name="NavStudy" Style="{StaticResource Chip}" GroupName="nav" Tag="study"
+                       Checked="Nav_Checked" HorizontalContentAlignment="Left" Margin="0,3">
+            <StackPanel Orientation="Horizontal">
+              <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE7BE;" Margin="0,0,12,0" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding [nav_study], Source={x:Static l:Loc.I}}"/>
+              <Border x:Name="StudyBadge" Visibility="Collapsed" CornerRadius="9" MinWidth="20" Padding="6,1"
+                      Margin="10,0,0,0" VerticalAlignment="Center" Background="{DynamicResource FgBrush}">
+                <TextBlock x:Name="StudyBadgeText" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center"
+                           Foreground="{DynamicResource OnFgBrush}"/>
+              </Border>
+            </StackPanel>
+          </RadioButton>
+          <RadioButton x:Name="NavCards" Style="{StaticResource Chip}" GroupName="nav" Tag="cards"
+                       Checked="Nav_Checked" HorizontalContentAlignment="Left" Margin="0,3">
+            <StackPanel Orientation="Horizontal">
+              <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE8F1;" Margin="0,0,12,0" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding [nav_cards], Source={x:Static l:Loc.I}}"/>
+              <Border x:Name="CardsBadge" Visibility="Collapsed" CornerRadius="9" MinWidth="20" Padding="6,1"
+                      Margin="10,0,0,0" VerticalAlignment="Center" Background="{DynamicResource FgBrush}">
+                <TextBlock x:Name="CardsBadgeText" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center"
+                           Foreground="{DynamicResource OnFgBrush}"/>
+              </Border>
+            </StackPanel>
+          </RadioButton>
+          <RadioButton x:Name="NavTimetable" Style="{StaticResource Chip}" GroupName="nav" Tag="timetable"
+                       Checked="Nav_Checked" HorizontalContentAlignment="Left" Margin="0,3">
+            <StackPanel Orientation="Horizontal">
+              <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE787;" Margin="0,0,12,0" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding [nav_timetable], Source={x:Static l:Loc.I}}"/>
+            </StackPanel>
+          </RadioButton>
+          <RadioButton x:Name="NavPlanner" Style="{StaticResource Chip}" GroupName="nav" Tag="planner"
+                       Checked="Nav_Checked" HorizontalContentAlignment="Left" Margin="0,3">
+            <StackPanel Orientation="Horizontal">
+              <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE787;" Margin="0,0,12,0" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding [nav_planner], Source={x:Static l:Loc.I}}"/>
+            </StackPanel>
+          </RadioButton>
+          <RadioButton x:Name="NavPrayer" Style="{StaticResource Chip}" GroupName="nav" Tag="prayer"
+                       Checked="Nav_Checked" HorizontalContentAlignment="Left" Margin="0,3">
+            <StackPanel Orientation="Horizontal">
+              <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE708;" Margin="0,0,12,0" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding [nav_prayer], Source={x:Static l:Loc.I}}"/>
+            </StackPanel>
+          </RadioButton>
+          <RadioButton x:Name="NavExam" Style="{StaticResource Chip}" GroupName="nav" Tag="exam"
+                       Checked="Nav_Checked" HorizontalContentAlignment="Left" Margin="0,3">
+            <StackPanel Orientation="Horizontal">
+              <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE70B;" Margin="0,0,12,0" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding [nav_exam], Source={x:Static l:Loc.I}}"/>
+            </StackPanel>
+          </RadioButton>
+          <RadioButton x:Name="NavSettings" Style="{StaticResource Chip}" GroupName="nav" Tag="settings"
+                       Checked="Nav_Checked" HorizontalContentAlignment="Left" Margin="0,3">
+            <StackPanel Orientation="Horizontal">
+              <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE713;" Margin="0,0,12,0" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding [nav_settings], Source={x:Static l:Loc.I}}"/>
+            </StackPanel>
+          </RadioButton>
+          <RadioButton x:Name="NavHelp" Style="{StaticResource Chip}" GroupName="nav" Tag="help"
+                       Checked="Nav_Checked" HorizontalContentAlignment="Left" Margin="0,3">
+            <StackPanel Orientation="Horizontal">
+              <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE897;" Margin="0,0,12,0" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding [nav_help], Source={x:Static l:Loc.I}}"/>
+            </StackPanel>
+          </RadioButton>
+        </StackPanel>
+      </DockPanel>
+    </Border>
+
+    <!-- ================= Content ================= -->
+    <Grid Grid.Column="1" Margin="8,6,16,14">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+      </Grid.RowDefinitions>
+
+      <TextBlock x:Name="PageTitle" Grid.Row="0" FontSize="28" FontWeight="ExtraBold" Margin="4,2,0,12"/>
+
+      <!-- ===== Home ===== -->
+      <ScrollViewer x:Name="PanelHome" Grid.Row="1" VerticalScrollBarVisibility="Auto" FlowDirection="LeftToRight">
+        <StackPanel x:Name="HomeHost" Margin="0,0,10,16" MaxWidth="760" HorizontalAlignment="Stretch" FlowDirection="{Binding Flow, Source={x:Static l:Loc.I}}"/>
+      </ScrollViewer>
+
+      <!-- ===== Planner ===== -->
+      <ScrollViewer x:Name="PanelPlanner" Grid.Row="1" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" FlowDirection="LeftToRight">
+        <StackPanel x:Name="PlannerHost" Margin="0,0,10,16" FlowDirection="{Binding Flow, Source={x:Static l:Loc.I}}"/>
+      </ScrollViewer>
+
+      <!-- ===== Tables ===== -->
+      <Grid x:Name="PanelTables" Grid.Row="1">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <WrapPanel x:Name="BoardsPanel" Grid.Row="0" Margin="0,0,0,8"/>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,2,0,12">
+          <Button Click="AddItem_Click">
+            <StackPanel Orientation="Horizontal">
+              <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE710;" Margin="0,0,8,0" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding [add_item], Source={x:Static l:Loc.I}}"/>
+            </StackPanel>
+          </Button>
+          <Button Style="{StaticResource GhostButton}" Click="DeleteBoard_Click">
+            <StackPanel Orientation="Horizontal">
+              <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE74D;" Margin="0,0,8,0" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding [delete_table], Source={x:Static l:Loc.I}}"/>
+            </StackPanel>
+          </Button>
+        </StackPanel>
+
+        <Grid Grid.Row="2">
+          <!-- ListBox is LTR so its scrollbar stays on the right; each card follows the language direction -->
+          <ListBox x:Name="ItemsList" MouseDoubleClick="ItemsList_DoubleClick" PreviewMouseLeftButtonDown="ItemsList_PreviewMouseDown" PreviewMouseMove="ItemsList_PreviewMouseMove" Background="Transparent" BorderThickness="0" FlowDirection="LeftToRight"
+                   HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                   ScrollViewer.CanContentScroll="True" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.ScrollUnit="Pixel" VirtualizingPanel.VirtualizationMode="Standard">
+            <ListBox.ItemContainerStyle>
+              <Style TargetType="ListBoxItem">
+                <Setter Property="Focusable" Value="False"/>
+                <Setter Property="Template">
+                  <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                      <ContentPresenter/>
+                    </ControlTemplate>
+                  </Setter.Value>
+                </Setter>
+              </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <Border CornerRadius="12" Padding="14,10" Margin="0,3,8,3"
+                        Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource LineBrush}" BorderThickness="1"
+                        FlowDirection="{Binding Flow, Source={x:Static l:Loc.I}}">
+                  <Grid>
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="Auto"/>
+                      <ColumnDefinition Width="Auto"/>
+                      <ColumnDefinition Width="*"/>
+                      <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <CheckBox Grid.Column="0" Style="{StaticResource Switch}" VerticalAlignment="Center" Margin="0,0,16,0"
+                              Visibility="{Binding AlarmVisibility}"
+                              IsChecked="{Binding Enabled, Mode=OneWay}" Click="ItemEnabled_Click"/>
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,16,0" MinWidth="130"
+                                Visibility="{Binding AlarmVisibility}">
+                      <TextBlock Text="{Binding TimeText}" FontSize="28" FontWeight="Bold" FlowDirection="LeftToRight"/>
+                      <TextBlock Text="{Binding DateText}" FontSize="12" Foreground="{DynamicResource SubFgBrush}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                      <TextBlock Text="{Binding Title}" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                      <TextBlock Text="{Binding SoundText}" FontSize="12.5" Foreground="{DynamicResource SubFgBrush}"/>
+                      <TextBlock Text="{Binding TasksText}" FontSize="12.5" Foreground="{DynamicResource SubFgBrush}" TextWrapping="Wrap"/>
+                      <TextBlock Text="{Binding Notes}" FontSize="12.5" Foreground="{DynamicResource SubFgBrush}" TextWrapping="Wrap" FontStyle="Italic"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center">
+                      <Button Style="{StaticResource GhostButton}" Padding="10,8" MinWidth="40" Click="TestItem_Click"
+                              ToolTip="{Binding [test], Source={x:Static l:Loc.I}}">
+                        <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE768;" FontSize="15"/>
+                      </Button>
+                      <Button Style="{StaticResource GhostButton}" Padding="10,8" MinWidth="40" Click="EditItem_Click"
+                              ToolTip="{Binding [edit], Source={x:Static l:Loc.I}}">
+                        <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE70F;" FontSize="15"/>
+                      </Button>
+                      <Button Style="{StaticResource GhostButton}" Padding="10,8" MinWidth="40" Click="DeleteItem_Click"
+                              ToolTip="{Binding [delete], Source={x:Static l:Loc.I}}">
+                        <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE74D;" FontSize="15"/>
+                      </Button>
+                    </StackPanel>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+
+          <TextBlock x:Name="EmptyHint" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"
+                     TextAlignment="Center" TextWrapping="Wrap" MaxWidth="420" FontSize="15" IsHitTestVisible="False"
+                     Foreground="{DynamicResource SubFgBrush}"
+                     Text="{Binding [empty_items], Source={x:Static l:Loc.I}}"/>
+        </Grid>
+      </Grid>
+
+      <!-- ===== Study ===== -->
+      <Grid x:Name="PanelStudy" Grid.Row="1" Visibility="Collapsed">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <WrapPanel x:Name="CoursesPanel" Grid.Row="0" Margin="0,0,0,8"/>
+
+        <WrapPanel Grid.Row="1" Margin="0,2,0,12">
+          <Button Click="StartSession_Click">
+            <StackPanel Orientation="Horizontal">
+              <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE768;" Margin="0,0,8,0" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding [fs_start], Source={x:Static l:Loc.I}}"/>
+            </StackPanel>
+          </Button>
+          <Button Style="{StaticResource GhostButton}" Click="SessionHistory_Click">
+            <StackPanel Orientation="Horizontal">
+              <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE81C;" Margin="0,0,8,0" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding [fs_history], Source={x:Static l:Loc.I}}"/>
+            </StackPanel>
+          </Button>
+          <Button Style="{StaticResource GhostButton}" Click="AddTopic_Click">
+            <StackPanel Orientation="Horizontal">
+              <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE710;" Margin="0,0,8,0" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding [study_add_topic], Source={x:Static l:Loc.I}}"/>
+            </StackPanel>
+          </Button>
+          <Button Style="{StaticResource GhostButton}" Click="RenameCourse_Click">
+            <StackPanel Orientation="Horizontal">
+              <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE70F;" Margin="0,0,8,0" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding [study_rename_course], Source={x:Static l:Loc.I}}"/>
+            </StackPanel>
+          </Button>
+          <Button Style="{StaticResource GhostButton}" Click="DeleteCourse_Click">
+            <StackPanel Orientation="Horizontal">
+              <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE74D;" Margin="0,0,8,0" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding [study_delete_course], Source={x:Static l:Loc.I}}"/>
+            </StackPanel>
+          </Button>
+        </WrapPanel>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,10">
+          <RadioButton x:Name="FilterDue" Style="{StaticResource Chip}" GroupName="studyfilter" Tag="due"
+                       IsChecked="True" Checked="StudyFilter_Checked" Padding="12,5"
+                       Content="{Binding [study_f_due], Source={x:Static l:Loc.I}}"/>
+          <RadioButton x:Name="FilterAll" Style="{StaticResource Chip}" GroupName="studyfilter" Tag="all"
+                       Checked="StudyFilter_Checked" Padding="12,5"
+                       Content="{Binding [study_f_all], Source={x:Static l:Loc.I}}"/>
+          <TextBlock x:Name="StudySummary" VerticalAlignment="Center" Margin="14,0,0,0"
+                     Foreground="{DynamicResource SubFgBrush}"/>
+        </StackPanel>
+
+        <Grid Grid.Row="3">
+          <ListBox x:Name="TopicsList" Background="Transparent" BorderThickness="0" FlowDirection="LeftToRight"
+                   HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                   ScrollViewer.CanContentScroll="True" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.ScrollUnit="Pixel" VirtualizingPanel.VirtualizationMode="Standard">
+            <ListBox.ItemContainerStyle>
+              <Style TargetType="ListBoxItem">
+                <Setter Property="Focusable" Value="False"/>
+                <Setter Property="Template">
+                  <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                      <ContentPresenter/>
+                    </ControlTemplate>
+                  </Setter.Value>
+                </Setter>
+              </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <Border CornerRadius="12" Padding="14,10" Margin="0,3,8,3"
+                        Background="{DynamicResource CardBrush}"
+                        FlowDirection="{Binding Flow, Source={x:Static l:Loc.I}}">
+                  <Border.Style>
+                    <Style TargetType="Border">
+                      <Setter Property="BorderBrush" Value="{DynamicResource LineBrush}"/>
+                      <Setter Property="BorderThickness" Value="1"/>
+                      <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsDue}" Value="True">
+                          <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                          <Setter Property="BorderThickness" Value="2"/>
+                        </DataTrigger>
+                      </Style.Triggers>
+                    </Style>
+                  </Border.Style>
+                  <Grid>
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="Auto"/>
+                      <ColumnDefinition Width="*"/>
+                      <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="0" Click="TopicReview_Click" Margin="0,0,16,0" VerticalAlignment="Center"
+                            ToolTip="{Binding [study_reviewed], Source={x:Static l:Loc.I}}">
+                      <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource RoundButton}">
+                          <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsDue}" Value="True">
+                              <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+                              <Setter Property="Foreground" Value="{DynamicResource OnAccentBrush}"/>
+                            </DataTrigger>
+                          </Style.Triggers>
+                        </Style>
+                      </Button.Style>
+                      <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE73E;" FontSize="20"/>
+                    </Button>
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                      <TextBlock Text="{Binding Title}" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                      <TextBlock Text="{Binding Subtitle}" FontSize="12.5" Foreground="{DynamicResource SubFgBrush}" TextWrapping="Wrap"/>
+                      <TextBlock Text="{Binding DueText}" FontSize="13" FontWeight="SemiBold" Margin="0,4,0,0">
+                        <TextBlock.Style>
+                          <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="{DynamicResource SubFgBrush}"/>
+                            <Style.Triggers>
+                              <DataTrigger Binding="{Binding IsDue}" Value="True">
+                                <Setter Property="Foreground" Value="{DynamicResource FgBrush}"/>
+                              </DataTrigger>
+                            </Style.Triggers>
+                          </Style>
+                        </TextBlock.Style>
+                      </TextBlock>
+                      <TextBlock Text="{Binding StepText}" FontSize="12.5" Margin="0,2,0,0"
+                                 Foreground="{DynamicResource SubFgBrush}"/>
+<TextBlock Text="{Binding Notes}" FontSize="12.5" Foreground="{DynamicResource SubFgBrush}"
+                                 TextWrapping="Wrap" FontStyle="Italic" Margin="0,2,0,0"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                      <Button Style="{StaticResource GhostButton}" Padding="10,8" MinWidth="40" Click="TopicSession_Click"
+                              ToolTip="{Binding [fs_start_topic], Source={x:Static l:Loc.I}}">
+                        <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE768;" FontSize="15"/>
+                      </Button>
+                      <Button Style="{StaticResource GhostButton}" Padding="10,8" MinWidth="40" Click="EditTopic_Click"
+                              ToolTip="{Binding [edit], Source={x:Static l:Loc.I}}">
+                        <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE70F;" FontSize="15"/>
+                      </Button>
+                      <Button Style="{StaticResource GhostButton}" Padding="10,8" MinWidth="40" Click="DeleteTopic_Click"
+                              ToolTip="{Binding [delete], Source={x:Static l:Loc.I}}">
+                        <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE74D;" FontSize="15"/>
+                      </Button>
+                    </StackPanel>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+
+          <TextBlock x:Name="StudyEmptyHint" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"
+                     TextAlignment="Center" TextWrapping="Wrap" MaxWidth="440" FontSize="15" IsHitTestVisible="False"
+                     Foreground="{DynamicResource SubFgBrush}"/>
+        </Grid>
+      </Grid>
+
+      <!-- ===== Flashcards ===== -->
+      <Grid x:Name="PanelCards" Grid.Row="1" Visibility="Collapsed">
+
+        <Grid x:Name="CardsMain">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+
+          <StackPanel Grid.Row="0" Margin="0,0,0,8">
+            <WrapPanel x:Name="CardCoursesPanel"/>
+            <WrapPanel x:Name="CardSubjectsPanel" Margin="0,4,0,0" Visibility="Collapsed"/>
+          </StackPanel>
+
+          <StackPanel Grid.Row="1" Margin="0,2,0,12">
+          <WrapPanel>
+            <Button Click="StartReview_Click">
+              <StackPanel Orientation="Horizontal">
+                <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE768;" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding [card_review], Source={x:Static l:Loc.I}}"/>
+              </StackPanel>
+            </Button>
+            <Button Style="{StaticResource GhostButton}" Click="AddCard_Click">
+              <StackPanel Orientation="Horizontal">
+                <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE710;" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding [card_new], Source={x:Static l:Loc.I}}"/>
+              </StackPanel>
+            </Button>
+            <Button Style="{StaticResource GhostButton}" Click="ToggleCardEdit_Click">
+              <StackPanel Orientation="Horizontal">
+                <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE70F;" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding [card_edit_mode], Source={x:Static l:Loc.I}}"/>
+              </StackPanel>
+            </Button>
+            <Button x:Name="CardsMoreBtn" Style="{StaticResource GhostButton}" Click="CardsMore_Click" MinWidth="44"
+                    ToolTip="{Binding [card_more], Source={x:Static l:Loc.I}}">
+              <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE712;" VerticalAlignment="Center"/>
+            </Button>
+          </WrapPanel>
+          <StackPanel x:Name="CardsEditBar" Visibility="Collapsed" Margin="0,8,0,0">
+            <WrapPanel>
+              <Button Style="{StaticResource GhostButton}" Click="SelectAllRows_Click" Content="{Binding [card_sel_all], Source={x:Static l:Loc.I}}"/>
+              <Button Style="{StaticResource GhostButton}" Click="BulkMove_Click" Content="{Binding [card_move_subj], Source={x:Static l:Loc.I}}"/>
+              <Button Style="{StaticResource GhostButton}" Click="BulkDelete_Click" Content="{Binding [card_del_sel], Source={x:Static l:Loc.I}}"/>
+              <Button Click="ToggleCardEdit_Click" Content="{Binding [card_edit_done], Source={x:Static l:Loc.I}}"/>
+            </WrapPanel>
+            <TextBlock x:Name="CardsEditHint" TextWrapping="Wrap" FontSize="12.5" Margin="2,8,0,0"
+                       Foreground="{DynamicResource SubFgBrush}"/>
+          </StackPanel>
+          </StackPanel>
+
+          <StackPanel x:Name="CardsFilterRow" Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,10">
+            <RadioButton x:Name="CardFilterDue" Style="{StaticResource Chip}" GroupName="cardfilter" Tag="due"
+                         IsChecked="True" Checked="CardFilter_Checked" Padding="12,5"
+                         Content="{Binding [study_f_due], Source={x:Static l:Loc.I}}"/>
+            <RadioButton x:Name="CardFilterAll" Style="{StaticResource Chip}" GroupName="cardfilter" Tag="all"
+                         Checked="CardFilter_Checked" Padding="12,5"
+                         Content="{Binding [study_f_all], Source={x:Static l:Loc.I}}"/>
+            <TextBlock x:Name="CardsSummary" VerticalAlignment="Center" Margin="14,0,0,0"
+                       Foreground="{DynamicResource SubFgBrush}"/>
+          </StackPanel>
+
+          <Grid Grid.Row="3">
+            <ListBox x:Name="CardsList" Background="Transparent" BorderThickness="0" FlowDirection="LeftToRight"
+                     HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                   ScrollViewer.CanContentScroll="True" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.ScrollUnit="Pixel" VirtualizingPanel.VirtualizationMode="Standard">
+              <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                  <Setter Property="Focusable" Value="False"/>
+                  <Setter Property="Template">
+                    <Setter.Value>
+                      <ControlTemplate TargetType="ListBoxItem">
+                        <ContentPresenter/>
+                      </ControlTemplate>
+                    </Setter.Value>
+                  </Setter>
+                </Style>
+              </ListBox.ItemContainerStyle>
+              <ListBox.ItemTemplate>
+                <DataTemplate>
+                  <Border CornerRadius="10" Padding="14,9" Margin="0,2,8,2" MouseLeftButtonDown="CardRow_MouseDown"
+                          Background="{DynamicResource CardBrush}"
+                          FlowDirection="{Binding Flow, Source={x:Static l:Loc.I}}">
+                    <Border.Style>
+                      <Style TargetType="Border">
+                        <Setter Property="BorderBrush" Value="{DynamicResource LineBrush}"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                        <Style.Triggers>
+                          <DataTrigger Binding="{Binding IsDue}" Value="True">
+                            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                          </DataTrigger>
+                        </Style.Triggers>
+                      </Style>
+                    </Border.Style>
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                      </Grid.ColumnDefinitions>
+                      <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Front}" FontSize="15" FontWeight="SemiBold" TextWrapping="Wrap" MaxHeight="48" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Text="{Binding Back}" FontSize="13" TextWrapping="Wrap" MaxHeight="40" TextTrimming="CharacterEllipsis"
+                                   Foreground="{DynamicResource SubFgBrush}"/>
+                        <TextBlock Text="{Binding NextText}" FontSize="12" Margin="0,4,0,0" Foreground="{DynamicResource SubFgBrush}"/>
+                      </StackPanel>
+                      <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Opacity="0.4">
+                        <StackPanel.Style>
+                          <Style TargetType="StackPanel">
+                            <Style.Triggers>
+                              <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=Border}}" Value="True">
+                                <Setter Property="Opacity" Value="1"/>
+                              </DataTrigger>
+                            </Style.Triggers>
+                          </Style>
+                        </StackPanel.Style>
+                        <Button Style="{StaticResource GhostButton}" Padding="8,6" MinWidth="36" Click="EditCard_Click"
+                                ToolTip="{Binding [edit], Source={x:Static l:Loc.I}}">
+                          <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE70F;" FontSize="14"/>
+                        </Button>
+                        <Button Style="{StaticResource GhostButton}" Padding="8,6" MinWidth="36" Click="DeleteCard_Click"
+                                ToolTip="{Binding [delete], Source={x:Static l:Loc.I}}">
+                          <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE74D;" FontSize="14"/>
+                        </Button>
+                      </StackPanel>
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+
+            <Grid x:Name="CardsEditHost" Visibility="Collapsed">
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+              </Grid.RowDefinitions>
+              <Grid Grid.Row="0" Margin="70,0,150,4" FlowDirection="{Binding Flow, Source={x:Static l:Loc.I}}">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*"/>
+                  <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" FontWeight="SemiBold" Foreground="{DynamicResource SubFgBrush}" Text="{Binding [card_front], Source={x:Static l:Loc.I}}"/>
+                <TextBlock Grid.Column="1" FontWeight="SemiBold" Foreground="{DynamicResource SubFgBrush}" Margin="6,0,0,0" Text="{Binding [card_back], Source={x:Static l:Loc.I}}"/>
+              </Grid>
+              <ListBox x:Name="CardsEditList" Grid.Row="1" Background="Transparent" BorderThickness="0" FlowDirection="LeftToRight"
+                       HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                       ScrollViewer.CanContentScroll="False" KeyboardNavigation.TabNavigation="Continue"
+                       PreviewKeyDown="EditList_PreviewKeyDown" GotKeyboardFocus="EditList_GotFocus">
+                <ListBox.ItemContainerStyle>
+                  <Style TargetType="ListBoxItem">
+                    <Setter Property="Focusable" Value="False"/>
+                    <Setter Property="Template">
+                      <Setter.Value>
+                        <ControlTemplate TargetType="ListBoxItem">
+                          <ContentPresenter/>
+                        </ControlTemplate>
+                      </Setter.Value>
+                    </Setter>
+                  </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                  <DataTemplate>
+                    <Border CornerRadius="12" Padding="10,8" Margin="0,3,8,3" BorderThickness="1"
+                            Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource LineBrush}"
+                            FlowDirection="{Binding Flow, Source={x:Static l:Loc.I}}">
+                      <Grid>
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="Auto"/>
+                          <ColumnDefinition Width="Auto"/>
+                          <ColumnDefinition Width="*"/>
+                          <ColumnDefinition Width="*"/>
+                          <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="&#xE700;" FontFamily="{StaticResource IconFont}" FontSize="16" Cursor="SizeAll"
+                                   Background="Transparent" Padding="2,8" Margin="0,0,6,0" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource SubFgBrush}"
+                                   PreviewMouseLeftButtonDown="DragHandle_Down" PreviewMouseMove="DragHandle_Move"
+                                   PreviewMouseLeftButtonUp="DragHandle_Up" LostMouseCapture="DragHandle_Lost"/>
+                        <CheckBox Grid.Column="1" IsTabStop="False" VerticalAlignment="Center" Margin="0,0,10,0"
+                                  IsChecked="{Binding IsSelected, Mode=TwoWay}" Click="RowSelect_Changed"/>
+                        <TextBox Grid.Column="2" Margin="0,0,6,0" MinHeight="40" MaxHeight="130" AcceptsReturn="True" TextWrapping="Wrap"
+                                 VerticalScrollBarVisibility="Auto" Text="{Binding Front, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBox Grid.Column="3" Margin="0,0,6,0" MinHeight="40" MaxHeight="130" AcceptsReturn="True" TextWrapping="Wrap"
+                                 VerticalScrollBarVisibility="Auto" Text="{Binding Back, UpdateSourceTrigger=PropertyChanged}"/>
+                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                          <Button Style="{StaticResource GhostButton}" IsTabStop="False" Padding="10,6" MinWidth="64" MaxWidth="120"
+                                  Click="RowSubject_Click" Content="{Binding SubjectText}"/>
+                          <Button Style="{StaticResource GhostButton}" IsTabStop="False" Padding="10,8" MinWidth="40" Click="RowDelete_Click"
+                                  ToolTip="{Binding [delete], Source={x:Static l:Loc.I}}">
+                            <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE74D;" FontSize="15"/>
+                          </Button>
+                        </StackPanel>
+                      </Grid>
+                    </Border>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+            </Grid>
+
+            <TextBlock x:Name="CardsEmptyHint" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"
+                       TextAlignment="Center" TextWrapping="Wrap" MaxWidth="440" FontSize="15" IsHitTestVisible="False"
+                       Foreground="{DynamicResource SubFgBrush}"/>
+          </Grid>
+        </Grid>
+
+        <!-- review session: a 3D-style flip card -->
+        <Grid x:Name="ReviewPane" Visibility="Collapsed">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+          </Grid.RowDefinitions>
+
+          <DockPanel Grid.Row="0" Margin="0,0,0,6" LastChildFill="True">
+            <Button DockPanel.Dock="Right" Style="{StaticResource GhostButton}" Click="CloseReview_Click" Focusable="False">
+              <TextBlock FontFamily="{StaticResource IconFont}" Text="&#xE711;" FontSize="15"/>
+            </Button>
+            <Border x:Name="ReviewBoxBadge" DockPanel.Dock="Right" CornerRadius="12" Padding="12,4" Margin="0,0,10,0"
+                    VerticalAlignment="Center" Background="{DynamicResource AccentBrush}">
+              <TextBlock x:Name="ReviewBoxText" FontWeight="Bold" FlowDirection="LeftToRight"
+                         Foreground="{DynamicResource OnAccentBrush}"/>
+            </Border>
+            <TextBlock x:Name="ReviewTimer" DockPanel.Dock="Right" FontSize="15" FontWeight="SemiBold" Margin="0,0,12,0"
+                       VerticalAlignment="Center" FlowDirection="LeftToRight"/>
+            <Button x:Name="BtnPause" DockPanel.Dock="Right" Style="{StaticResource GhostButton}" Click="Pause_Click" Focusable="False" Margin="0,0,6,0">
+              <TextBlock x:Name="PauseIcon" FontFamily="{StaticResource IconFont}" Text="&#xE769;" FontSize="15"/>
+            </Button>
+            <TextBlock x:Name="ReviewProgress" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"/>
+          </DockPanel>
+
+          <Grid Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="580" Height="350" FlowDirection="LeftToRight">
+            <!-- the two cards behind give the deck some depth -->
+            <Border CornerRadius="28" Background="{DynamicResource AccentBrush}" Opacity="0.18" RenderTransformOrigin="0.5,0.5">
+              <Border.RenderTransform>
+                <TransformGroup>
+                  <ScaleTransform ScaleX="0.92" ScaleY="0.96"/>
+                  <TranslateTransform Y="30"/>
+                </TransformGroup>
+              </Border.RenderTransform>
+            </Border>
+            <Border CornerRadius="28" Background="{DynamicResource AccentBrush}" Opacity="0.34" RenderTransformOrigin="0.5,0.5">
+              <Border.RenderTransform>
+                <TransformGroup>
+                  <ScaleTransform ScaleX="0.96" ScaleY="0.98"/>
+                  <TranslateTransform Y="15"/>
+                </TransformGroup>
+              </Border.RenderTransform>
+            </Border>
+
+            <Border x:Name="FlipCard" CornerRadius="28" Cursor="Hand" RenderTransformOrigin="0.5,0.5"
+                    BorderThickness="1" BorderBrush="{DynamicResource LineBrush}"
+                    MouseLeftButtonDown="FlipCard_MouseDown" MouseEnter="FlipCard_MouseEnter" MouseLeave="FlipCard_MouseLeave">
+              <Border.RenderTransform>
+                <TransformGroup>
+                  <ScaleTransform x:Name="FlipScale"/>
+                  <ScaleTransform x:Name="HoverScale"/>
+                </TransformGroup>
+              </Border.RenderTransform>
+              <Border.Effect>
+                <DropShadowEffect x:Name="CardShadow" BlurRadius="42" ShadowDepth="16" Direction="270" Opacity="0.5" Color="Black"/>
+              </Border.Effect>
+              <Grid Margin="32,26">
+                <TextBlock x:Name="FaceLabel" VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="12" FontWeight="Bold" Opacity="0.75"/>
+                <TextBlock x:Name="FaceText" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center"
+                           TextWrapping="Wrap" FontSize="30" FontWeight="SemiBold"
+                           FlowDirection="{Binding Flow, Source={x:Static l:Loc.I}}"/>
+                <TextBlock x:Name="FaceHint" VerticalAlignment="Bottom" HorizontalAlignment="Center" FontSize="12" Opacity="0.75"/>
+              </Grid>
+            </Border>
+          </Grid>
+
+          <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,24,0,6">
+            <TextBlock x:Name="ReviewKeys" HorizontalAlignment="Center" FontSize="12" Margin="0,0,0,10"
+                       Foreground="{DynamicResource SubFgBrush}"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+              <Button x:Name="BtnAgain" Focusable="False" Click="Again_Click" Visibility="Collapsed" Padding="18,9" MinWidth="104"
+                      Background="#E5484D" Foreground="White"/>
+              <Button x:Name="BtnHard" Focusable="False" Click="Hard_Click" Visibility="Collapsed" Padding="18,9" MinWidth="104"
+                      Background="#F5A524" Foreground="White"/>
+              <Button x:Name="BtnShow" Focusable="False" Click="ShowAnswer_Click" Padding="34,11">
+                <TextBlock Text="{Binding [card_show], Source={x:Static l:Loc.I}}"/>
+              </Button>
+              <Button x:Name="BtnGood" Focusable="False" Click="Good_Click" Visibility="Collapsed" Padding="18,9" MinWidth="104"
+                      Background="#4C8DF6" Foreground="White"/>
+              <Button x:Name="BtnEasy" Focusable="False" Click="Easy_Click" Visibility="Collapsed" Padding="18,9" MinWidth="104"
+                      Background="#2FBF71" Foreground="White"/>
+            </StackPanel>
+          </StackPanel>
+        </Grid>
+      </Grid>
+
+      <!-- ===== Timetable ===== -->
+      <ScrollViewer x:Name="PanelTimetable" Grid.Row="1" Visibility="Collapsed" VerticalScrollBarVisibility="Auto"
+                    HorizontalScrollBarVisibility="Auto" FlowDirection="LeftToRight">
+        <StackPanel x:Name="TimetableHost" Margin="0,0,10,16" FlowDirection="{Binding Flow, Source={x:Static l:Loc.I}}"/>
+      </ScrollViewer>
+
+      <!-- ===== Prayer times ===== -->
+      <ScrollViewer x:Name="PanelPrayer" Grid.Row="1" Visibility="Collapsed" VerticalScrollBarVisibility="Auto"
+                    HorizontalScrollBarVisibility="Auto" FlowDirection="LeftToRight">
+        <StackPanel x:Name="PrayerHost" MaxWidth="760" HorizontalAlignment="Stretch" Margin="0,0,10,16" FlowDirection="{Binding Flow, Source={x:Static l:Loc.I}}"/>
+      </ScrollViewer>
+
+      <!-- ===== Exam ===== -->
+      <ScrollViewer x:Name="PanelExam" Grid.Row="1" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" FlowDirection="LeftToRight">
+        <StackPanel x:Name="ExamHost" Margin="0,0,10,16" FlowDirection="{Binding Flow, Source={x:Static l:Loc.I}}"/>
+      </ScrollViewer>
+
+      <!-- ===== Settings ===== -->
+      <ScrollViewer x:Name="PanelSettings" Grid.Row="1" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" FlowDirection="LeftToRight">
+        <StackPanel x:Name="SettingsHost" Margin="0,0,10,16" FlowDirection="{Binding Flow, Source={x:Static l:Loc.I}}"/>
+      </ScrollViewer>
+
+      <!-- ===== Help ===== -->
+      <ScrollViewer x:Name="PanelHelp" Grid.Row="1" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" FlowDirection="LeftToRight">
+        <StackPanel x:Name="HelpHost" Margin="0,0,10,16" FlowDirection="{Binding Flow, Source={x:Static l:Loc.I}}"/>
+      </ScrollViewer>
+    </Grid>
+  </Grid>
+</Window>
