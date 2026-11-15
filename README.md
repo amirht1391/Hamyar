@@ -1,6 +1,4 @@
-
-
-Uploading Hamyar_Promo_v2_compressed.mp4…
+https://github.com/user-attachments/assets/6f46203a-74d0-4ff1-a21a-a09b37fd4556
 
 # Hamyar (همیار)
 
